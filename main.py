@@ -44,7 +44,7 @@ class User:
     else:
       print("Index invalid.")
 
-movie_list = MovieList()
+movie_list = User()
 
 while True:
   print("\n1. Add Movie")
@@ -66,13 +66,13 @@ while True:
     genre = input("Genre: ")
     movie_list.add_movie(Movie(title, director, year, genre))
 
-  elif choice == 2
+  elif choice == 2:
     movie_list.view_movies()
 
-  elif choice == 3
+  elif choice == 3:
     movie_list.view_movies()
     try:
-      index = int(input(Number of movie to edit: "))
+      index = int(input("Number of movie to edit: "))
     except ValueError:
       print("Enter a number.")
       continue
@@ -84,12 +84,12 @@ while True:
 
     movie_list.edit_movie(
       index,
-      title=title or None
-      director=director or None
-      year=year or None
+      title=title or None,
+      director=director or None,
+      year=year or None,
       genre=genre or None
     )
-  elif choice == 4
+  elif choice == 4:
     movie_list.view_movies()
     try:
       index = int(input("Number of movie to remove: "))
@@ -98,7 +98,8 @@ while True:
       continue
     movie_list.remove_movie(index)
 
-  elif choice == 5
+  elif choice == 5:
+    print("placeholder, HELLO HI")
   #will do when there is a homescreen to go to
 
   else:
