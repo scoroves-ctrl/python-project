@@ -28,6 +28,7 @@ class User:
   def view_movies(self):
     if not self.movies:
       print("You don't have any movies in your list yet.")
+      return 1
     else:
       for i, movie in enumerate(self.movies):
         print(f"{i}: {movie}")
@@ -71,33 +72,38 @@ def sign_in():
       movie_list.view_movies()
 
     elif choice == 3:
-      movie_list.view_movies()
-      try:
-        index = int(input("Number of movie to edit: "))
-      except ValueError:
-        print("Enter a number.")
+      if movie_list.view_movies() != 1:
+        while True:
+          index = int(input("Number of movie to edit: "))
+          if 0 <= index < len(movie_list.movies):
+            break
+          else:
+            print("Enter a valid movie number.")
+
+        title = input("New title (leave blank if already correct): ")
+        director = input("New director (leave blank if already correct): ")
+        year = input("New year (leave blank if already correct): ")
+        genre = input("New genre (leave blank if already correct): ")
+
+        movie_list.edit_movie(
+          index,
+          title=title or None,
+          director=director or None,
+          year=year or None,
+          genre=genre or None
+        )
+      else:
         continue
-
-      title = input("New title (leave blank if already correct): ")
-      director = input("New director (leave blank if already correct): ")
-      year = input("New year (leave blank if already correct): ")
-      genre = input("New genre (leave blank if already correct): ")
-
-      movie_list.edit_movie(
-        index,
-        title=title or None,
-        director=director or None,
-        year=year or None,
-        genre=genre or None
-      )
     elif choice == 4:
-      movie_list.view_movies()
-      try:
-        index = int(input("Number of movie to remove: "))
-      except ValueError:
-        print("Enter a number.")
+      if movie_list.view_movies() != 1:
+        try:
+          index = int(input("Number of movie to remove: "))
+        except ValueError:
+          print("Enter a number.")
+          continue
+        movie_list.remove_movie(index)
+      else:
         continue
-      movie_list.remove_movie(index)
 
     elif choice == 5:
       break
@@ -106,7 +112,7 @@ def sign_in():
       print("Choice invalid.")
 
 while True:
-  print("1. Sign in to view or add to your watched movie list") 
+  print("\n1. Sign in to view or add to your watched movie list") 
   print("2. Get a movie recomendation") 
   print("3. Make a profile") 
   print("4. Quit")
