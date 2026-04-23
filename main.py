@@ -46,61 +46,90 @@ class User:
 
 movie_list = User()
 
+def sign_in():
+  while True:
+    print("\n1. Add Movie")
+    print("2. View List")
+    print("3. Edit List")
+    print("4. Remove Movie")
+    print("5. Go back to homescreen")
+
+    try:
+      choice = int(input("Enter your choice (1-5)\n"))
+    except ValueError:
+      print("Enter a number.")
+      continue
+
+    if choice == 1:
+      title = input("Title: ")
+      director = input("Director: ")
+      year = input("Year: ")
+      genre = input("Genre: ")
+      movie_list.add_movie(Movie(title, director, year, genre))
+
+    elif choice == 2:
+      movie_list.view_movies()
+
+    elif choice == 3:
+      movie_list.view_movies()
+      try:
+        index = int(input("Number of movie to edit: "))
+      except ValueError:
+        print("Enter a number.")
+        continue
+
+      title = input("New title (leave blank if already correct): ")
+      director = input("New director (leave blank if already correct): ")
+      year = input("New year (leave blank if already correct): ")
+      genre = input("New genre (leave blank if already correct): ")
+
+      movie_list.edit_movie(
+        index,
+        title=title or None,
+        director=director or None,
+        year=year or None,
+        genre=genre or None
+      )
+    elif choice == 4:
+      movie_list.view_movies()
+      try:
+        index = int(input("Number of movie to remove: "))
+      except ValueError:
+        print("Enter a number.")
+        continue
+      movie_list.remove_movie(index)
+
+    elif choice == 5:
+      break
+
+    else:
+      print("Choice invalid.")
+
 while True:
-  print("\n1. Add Movie")
-  print("2. View List")
-  print("3. Edit List")
-  print("4. Remove Movie")
-  print("5. Go back to homescreen")
+  print("1. Sign in to view or add to your watched movie list") 
+  print("2. Get a movie recomendation") 
+  print("3. Make a profile") 
+  print("4. Quit")
 
   try:
-    choice = int(input("Enter your choice (1-5)"))
+    choice = int(input("Enter your choice (1-4)\n"))
   except ValueError:
     print("Enter a number.")
     continue
-
+  
   if choice == 1:
-    title = input("Title: ")
-    director = input("Director: ")
-    year = input("Year: ")
-    genre = input("Genre: ")
-    movie_list.add_movie(Movie(title, director, year, genre))
+    sign_in()
 
   elif choice == 2:
-    movie_list.view_movies()
+    print("placeholder")
 
   elif choice == 3:
-    movie_list.view_movies()
-    try:
-      index = int(input("Number of movie to edit: "))
-    except ValueError:
-      print("Enter a number.")
-      continue
+    print("placeholder")
 
-    title = input("New title (leave blank if already correct): ")
-    director = input("New director (leave blank if already correct): ")
-    year = input("New year (leave blank if already correct): ")
-    genre = input("New genre (leave blank if already correct): ")
-
-    movie_list.edit_movie(
-      index,
-      title=title or None,
-      director=director or None,
-      year=year or None,
-      genre=genre or None
-    )
   elif choice == 4:
-    movie_list.view_movies()
-    try:
-      index = int(input("Number of movie to remove: "))
-    except ValueError:
-      print("Enter a number.")
-      continue
-    movie_list.remove_movie(index)
-
-  elif choice == 5:
-    print("placeholder, HELLO HI")
-  #will do when there is a homescreen to go to
+    print("Goodbye!")
+    break
 
   else:
     print("Choice invalid.")
+
