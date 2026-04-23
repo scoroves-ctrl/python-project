@@ -1,3 +1,5 @@
+import cinemagoer
+
 class Movie:
   def __init__(self, title, director, year, genre):
     self.title = title
