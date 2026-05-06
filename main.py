@@ -264,14 +264,14 @@ def sign_in():
       print("Choice invalid.")
 
 def get_recommendations():
-  search_type = input("Search by title, actor, or director? (type the word title, actor, or director").lower()
+  search_type = input("Search by 1. title, 2. actor, or 3. director? (type the number").lower()
   query = input("Enter search term: ")
 
   movies = []
 
   try:
 
-    if search_type == "title":
+    if search_type == "1":
 
       results = movie_api.search(query)
 
@@ -291,7 +291,7 @@ def get_recommendations():
           "Genre": ", ".join(genres)
         })
 
-    elif search_type in ["actor", "director"]:
+    elif search_type in ["2", "3"]:
 
       people = person_api.search(query)
 
@@ -303,7 +303,7 @@ def get_recommendations():
 
       credits = person_api.movie_credits(person.id)
 
-      if search_type == "actor":
+      if search_type == "2":
         movie_list = credits.cast
       else:
         movie_list = credits.crew
