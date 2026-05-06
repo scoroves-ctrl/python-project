@@ -1,8 +1,13 @@
-from imdb import Cinemagoer
+from tmdbv3api import TMDb, Movie, Discover
 import pandas as pd
 import os
 import json
-movie_api = Cinemagoer()
+tmdb = TMDb()
+tmdb.api_key = "YOUR_API_KEY"
+tmdb.language = "en"
+
+movie_api = Movie()
+discover = Discover()
 
 class Movie:
   def __init__(self, title, director, year, genre):
@@ -327,38 +332,39 @@ def get_recommendations():
     else:
       print("Choice invalid.")
 
-  search_terms = []
-
-  for key in ["title", "genre", "studio"]:
-    search_terms.extend(criteria[key])
-
-  for name in criteria["director"] + criteria["actor"]:
-    search_terms.append(name)
-
-  if not search_terms:
-    search_terms = ["movie"]
-  
   movies = []
 
-  for term in search_terms:
-    results = movie_api.search_movie(term)
+  if criteria["title"]:
+    results = movie_api.search(criteria["title"][0])
+  else:
+    results = discover.discover_movies({
+      "sort_by": "popularity.desc"
+    })
 
-    for result in results[:25]:
-      try:
-        movie = movie_api.get_movie(result.movieID)
-        title = movie.get("title", "Unknown")
-        year = movie.get("year", "Unknown")
-        genres = movie.get("genres", [])
-        directors = movie.get("director", [])
-        cast = movie.get("cast", [])
-        kind = movie.get("kind", "")
-        production = movie.get("production companies", [])
+  for movie in results[:25]:
+    try:
+      details = movie_api.details(movie.id, append_to_response="credits")
 
-        director_names = [d["name"] for d in directors]
+      title = details.title
+      year = details.release_date[:4] if details.release_date else "Unknown"
+
+      genres = [g["name"] for g in details.genres] if hasattr(details, "genres") else []
+
+      studio_names = [c["name"] for c in details.production_companies] if hasattr(details, "production_companies") else []
+
+      director_names = []
+      actor_names = []
+
+      if hasattr(details, "credits"):
+        cast = details.credits.get("cast", [])
+        crew = details.credits.get("crew", [])
+
         actor_names = [a["name"] for a in cast[:10]]
-        studio_names = [p["name"] for p in production] if production else []
+        director_names = [c["name"] for c in crew if c["job"] == "Director"]
 
-        score = 0
+      kind = "movie"
+
+      score = 0
 
         if criteria["title"] and any(t.lower() in title.lower() for t in criteria["title"]):
           score += 4
