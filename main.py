@@ -337,9 +337,7 @@ def get_recommendations():
   if criteria["title"]:
     results = movie_api.search(criteria["title"][0])
   else:
-    results = discover.discover_movies({
-      "sort_by": "popularity.desc"
-    })
+    results = movie_api.popular()
 
   for movie in results[:25]:
     try:
@@ -397,8 +395,8 @@ def get_recommendations():
           "Medium": kind,
           "Score": score
         })
-        except Exception:
-          continue
+      except Exception:
+        continue
   df = pd.DataFrame(movies)
 
   if df.empty:
