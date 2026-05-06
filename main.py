@@ -13,6 +13,26 @@ class Movie:
     self.year = year
     self.genre = genre
 
+  def to_dict(self):
+    """This function can convert the movie class into a dictionary, which is easier to store in a csv"""
+    return {
+      "title": self.title,
+      "director": self.director,
+      "year": self.year,
+      "genre": self.genre
+    }
+
+  @staticmethod
+  # staticmethod decorator is used here so the method is bound to the class itself, rather than instances
+  def from_dict(data):
+    """This function can convert the dictionary form of a movie class back into a movie object"""
+    return Movie(
+      data["title"],
+      data["director"],
+      data["year"],
+      data["genre"]
+    )
+
   def update(self, title=None, director=None, year=None, genre=None):
     """
     This functions sets the title, director, year, and genre to none unless the user updates them
@@ -82,47 +102,112 @@ class User:
       # Gives user an error
       print("Index invalid.")
 
-movie_list = User()
-#Defines a user object 
+users = "users.csv"
+def load_data():
+  if os.path.exists(users) and os.path.getsize(users) > 0:
+      return pd.read_csv(users)
+  else:
+      return pd.DataFrame(columns=["username", "password", "movies"])
+
+def save_user(username, password, user_obj):
+    df = load_data()
+
+    movies_data = [movie.to_dict() for movie in user_obj.movies]
+    movies_json = json.dumps(movies_data)
+
+    new_row = {
+        "username": username,
+        "password": password,
+        "movies": movies_json
+    }
+
+    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    df.to_csv(users, index=False)
+
+def load_user(username, password):
+    df = load_data()
+
+    user_row = df[
+        (df["username"] == username) & 
+        (df["password"] == password)
+    ]
+
+    if user_row.empty:
+        print("Invalid username or password.")
+        return None
+
+    row = user_row.iloc[0]
+
+    user = User()
+
+    import json
+    movies_list = json.loads(row["movies"]) if row["movies"] else []
+
+    for movie_data in movies_list:
+        user.add_movie(Movie.from_dict(movie_data))
+
+    return user
+
+def update_user(username, user_obj):
+    df = load_data()
+
+    movies_data = [movie.to_dict() for movie in user_obj.movies]
+    movies_json = json.dumps(movies_data)
+
+    df.loc[df["username"] == username, "movies"] = movies_json
+
+    df.to_csv(users, index=False)
 
 def sign_in():
   """
   This function allows the user to sign in and select the option they want
   """
+  choice = input("Are you a returning user? (y/n): ")
+  if choice == "y":
+      username = input("What is your username?: ")
+      password = input("What is your password?: ")
+      loaded_user = load_user(username, password)
+      if loaded_user == None:
+        print("Try again")
+        return sign_in()
+  elif choice == "n":
+    movie_list = User()
+    username = input("What would you like as your username?: ")
+    password = input("What would you like as your password?: ")
+    save_user(username, password, movie_list)
+    loaded_user = load_user(username, password)
+  else:
+    print("Invalid input.")
+    return sign_in()
   while True:
-    #allows the options to be available until the user is signed out
     print("\n1. Add Movie")
     print("2. View List")
     print("3. Edit List")
     print("4. Remove Movie")
-    print("5. Log out")
+    print("5. Go back to homescreen")
 
     try:
       choice = int(input("Enter your choice (1-5)\n"))
-      #converts the entered string into an integer, so it could be used to make a choice
     except ValueError:
-      #If somehign other than a number is entered, it redirects the user to choose a number
       print("Enter a number.")
       continue
 
     if choice == 1:
-      #If the 1 choice is made, the used can add a movie and fill in the movie information
       title = input("Title: ")
       director = input("Director: ")
       year = input("Year: ")
       genre = input("Genre: ")
-      movie_list.add_movie(Movie(title, director, year, genre))
+      loaded_user.add_movie(Movie(title, director, year, genre))
+      update_user(username, loaded_user)
 
     elif choice == 2:
-      #If 2, the users movies are displayed
-      movie_list.view_movies()
+      loaded_user.view_movies()
 
     elif choice == 3:
-      # 3 allows the user to edit their movie list 
-      if movie_list.view_movies() != 1:
+      if loaded_user.view_movies() != 1:
         while True:
           index = int(input("Number of movie to edit: "))
-          if 0 <= index < len(movie_list.movies):
+          if 0 <= index < len(loaded_user.movies):
             break
           else:
             print("Enter a valid movie number.")
@@ -132,23 +217,25 @@ def sign_in():
         year = input("New year (leave blank if already correct): ")
         genre = input("New genre (leave blank if already correct): ")
 
-        movie_list.edit_movie(
+        loaded_user.edit_movie(
           index,
           title=title or None,
           director=director or None,
           year=year or None,
           genre=genre or None
         )
+        update_user(username, loaded_user)
       else:
         continue
     elif choice == 4:
-      if movie_list.view_movies() != 1:
+      if loaded_user.view_movies() != 1:
         try:
           index = int(input("Number of movie to remove: "))
         except ValueError:
           print("Enter a number.")
           continue
-        movie_list.remove_movie(index)
+        loader_user.remove_movie(index)
+        update_user(username, loaded_user)
       else:
         continue
 
@@ -157,7 +244,7 @@ def sign_in():
 
     else:
       print("Choice invalid.")
-
+      
 while True:
   print("\n1. Sign in to view or add to your watched movie list") 
   print("2. Get a movie recomendation") 
