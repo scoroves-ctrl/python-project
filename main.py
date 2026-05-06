@@ -5,7 +5,8 @@ movie_api = Cinemagoer()
 class Movie:
   def __init__(self, title, director, year, genre):
     """
-    This function is run every time a new movie is created
+    This function is run every time a new movie is created and allows each movie 
+    to store its title, director, year, and genre.
     """
     self.title = title
     self.director = director
@@ -13,6 +14,9 @@ class Movie:
     self.genre = genre
 
   def update(self, title=None, director=None, year=None, genre=None):
+    """
+    This functions sets the title, director, year, and genre to none unless the user updates them
+    """
     if title is not None:
       self.title = title
     if director is not None:
@@ -23,6 +27,9 @@ class Movie:
       self.genre = genre
 
   def __str__(self):
+    """
+    This function prints the movie in an organized way that allows it to be read nicely
+    """
     return f"{self.title} ({self.year}), directed by {self.director} - {self.genre}"
 
 class User:
