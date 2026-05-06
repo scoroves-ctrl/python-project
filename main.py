@@ -327,6 +327,13 @@ def get_recommendations():
     else:
       print("Choice invalid.")
 
+search_terms = []
+
+for key in ["title", "director", "actor", "genre", "studio"]:
+  search_terms.extend(criteria[key])
+if not search_terms:
+  search_terms = criteria["medium"] or [str(y) for y in criteria["year"]]
+  
 movies = []
 
 for term in search_terms:
@@ -386,11 +393,10 @@ df = pd.DataFrame(movies)
 
 if df.empty:
   print("No recommendations found.")
-  return
 
 df = df.drop_duplicates(subset=["Title", "Year"])
 #removes duplicate results
-df = df.sort_values(by="Score", ascending=False.head(10)
+df = df.sort_values(by="Score", ascending=False.head(10))
 #sorts the results by score, and shows the top 10
 
 print("\nMovie Recommendations:")
