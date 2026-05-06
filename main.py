@@ -4,6 +4,9 @@ movie_api = Cinemagoer()
 
 class Movie:
   def __init__(self, title, director, year, genre):
+    """
+    This function is run every time a new movie is created
+    """
     self.title = title
     self.director = director
     self.year = year
