@@ -264,7 +264,7 @@ def sign_in():
       print("Choice invalid.")
 
 def get_recommendations():
-  search_type = input("Search by title, actor, or director? ").lower()
+  search_type = input("Search by title, actor, or director? (type the word title, actor, or director").lower()
   query = input("Enter search term: ")
 
   movies = []
