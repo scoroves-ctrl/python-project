@@ -356,22 +356,22 @@ def get_recommendations():
 
         score = 0
 
-        if criteria["title"] and title.lower() in [t.lower() for t in criteria["title"]]:
+        if criteria["title"] and any(t.lower() in title.lower() for t in criteria["title"]):
           score += 4
 
-        if criteria["director"] and any(d.lower() in [dn.lower() for dn in director_names] for d in criteria["director"]):
+        if criteria["director"] and any(d.lower() in dn.lower() for d in criteria["director"] for dn in director_names):
           score += 3
 
-        if criteria["actor"] and any(a.lower() in [an.lower() for an in actor_names] for a in criteria["actor"]):
+        if criteria["actor"] and any(a.lower() in an.lower() for a in criteria["actor"] for an in actor_names):
           score += 3
 
-        if criteria["genre"] and any(g.lower() in [gn.lower() for gn in genres] for g in criteria["genre"]):
+        if criteria["genre"] and any(g.lower() in gn.lower() for g in criteria["genre"] for gn in genres):
           score += 2
 
         if criteria["year"] and year in criteria["year"]:
           score += 2
 
-        if criteria["studio"] and any(s.lower() in [sn.lower() for sn in studio_names] for s in criteria["studio"]):
+        if criteria["studio"] and any(s.lower() in sn.lower() for s in criteria["studio"] for sn in studio_names):
           score += 2
 
         if criteria["medium"] and any(m in kind.lower() for m in criteria["medium"]):
