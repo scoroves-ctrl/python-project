@@ -397,8 +397,8 @@ def get_recommendations():
           "Medium": kind,
           "Score": score
         })
-      except Exception:
-        continue
+        except Exception:
+          continue
   df = pd.DataFrame(movies)
 
   if df.empty:
