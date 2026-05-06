@@ -256,31 +256,6 @@ def sign_in():
 
     else:
       print("Choice invalid.")
-      
-while True:
-  print("\n1. Sign in to view or add to your watched movie list") 
-  print("2. Get a movie recomendation")
-  print("3. Quit")
-
-  try:
-    choice = int(input("Enter your choice (1-3)\n"))
-  except ValueError:
-    print("Enter a number.")
-    continue
-  
-  if choice == 1:
-    sign_in()
-
-  elif choice == 2:
-    get_recommendations()
-
-  elif choice == 3:
-    print("Goodbye!")
-    break
-
-  else:
-    print("Choice invalid.")
-
 
 def get_recommendations():
   criteria = {
@@ -422,3 +397,30 @@ print("\nMovie Recommendations:")
 #prints recomendations 
 for _, row in df.iterrows():
   print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - {row['Studio']} - {row['Medium']}")
+
+while True:
+  print("\n1. Sign in to view or add to your watched movie list") 
+  print("2. Get a movie recomendation")
+  print("3. Quit")
+
+  try:
+    choice = int(input("Enter your choice (1-3)\n"))
+  except ValueError:
+    print("Enter a number.")
+    continue
+  
+  if choice == 1:
+    sign_in()
+
+  elif choice == 2:
+    get_recommendations()
+
+  elif choice == 3:
+    print("Goodbye!")
+    break
+
+  else:
+    print("Choice invalid.")
+
+
+
