@@ -99,11 +99,14 @@ def sign_in():
 
     try:
       choice = int(input("Enter your choice (1-5)\n"))
+      #converts the entered string into an integer, so it could be used to make a choice
     except ValueError:
+      #If somehign other than a number is entered, it redirects the user to choose a number
       print("Enter a number.")
       continue
 
     if choice == 1:
+      #If the 1 choice is made, the used can add a movie and fill in the movie information
       title = input("Title: ")
       director = input("Director: ")
       year = input("Year: ")
@@ -111,9 +114,11 @@ def sign_in():
       movie_list.add_movie(Movie(title, director, year, genre))
 
     elif choice == 2:
+      #If 2, the users movies are displayed
       movie_list.view_movies()
 
     elif choice == 3:
+      # 3 allows the user to edit their movie list 
       if movie_list.view_movies() != 1:
         while True:
           index = int(input("Number of movie to edit: "))
