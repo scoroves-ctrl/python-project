@@ -412,8 +412,11 @@ if df.empty:
   return
 
 df = df.drop_duplicates(subset=["Title", "Year"])
+#removes duplicate results
 df = df.sort_values(by="Score", ascending=False.head(10)
+#sorts the results by score, and shows the top 10
 
 print("\nMovie Recommendations:")
+#prints recomendations 
 for _, row in df.iterrows():
   print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - row['Studio']} - row['Medium']}")
