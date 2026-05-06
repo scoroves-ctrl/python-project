@@ -339,7 +339,7 @@ def get_recommendations():
   else:
     results = movie_api.popular()
 
-  for movie in results[:25]:
+  for movie in list(results)[:25]:
     try:
       details = movie_api.details(movie.id, append_to_response="credits")
 
