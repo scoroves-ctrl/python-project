@@ -34,40 +34,68 @@ class Movie:
 
 class User:
   def __init__(self):
+    """
+    This function runs whenever a new user is created, 
+    and creates a new empty list of movies that belongs to the user.
+    """
     self.movies = []
 
   def add_movie(self, movie):
+    """
+    This function allows the user to append a movie to their list
+    """
     self.movies.append(movie)
 
   def view_movies(self):
+    """
+    This function shows all the movies in the users list
+    """
     if not self.movies:
+      #If the list of users movies remains empty, the function returns the message letting them know,
+      #and it does not let the user edit or remove things that are not there 
       print("You don't have any movies in your list yet.")
       return 1
     else:
+      #Lists and numbers the movies that are already in the users list
       for i, movie in enumerate(self.movies):
         print(f"{i}: {movie}")
 
   def edit_movie(self, index, **kwargs):
+    """
+    This function allows the user to edit a specific number movie 
+    """
     if 0 <= index < len(self.movies):
+      # This makes sure that the number given is less than or equal to the number of movies that the user has
       self.movies[index].update(**kwargs)
     else:
+      # If the number given does not corrolate to a movie the user get an error message
       print("Index invalid.")
 
   def remove_movie(self, index):
+    """
+    This function allows the user to remove a movie from the list
+    """
     if 0 <= index < len(self.movies):
+      # only lets user choose a number of an existing movie
       self.movies.pop(index)
     else:
+      # Gives user an error
       print("Index invalid.")
 
 movie_list = User()
+#Defines a user object 
 
 def sign_in():
+  """
+  This function allows the user to sign in and select the option they want
+  """
   while True:
+    #allows the options to be available until the user is signed out
     print("\n1. Add Movie")
     print("2. View List")
     print("3. Edit List")
     print("4. Remove Movie")
-    print("5. Go back to homescreen")
+    print("5. Log out")
 
     try:
       choice = int(input("Enter your choice (1-5)\n"))
