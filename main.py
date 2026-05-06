@@ -336,6 +336,12 @@ def get_recommendations():
 
   if criteria["title"]:
     results = movie_api.search(criteria["title"][0])
+  elif criteria["actor"]:
+    results = movie_api.search(criteria["actor"][0])
+  elif criteria["director"]:
+    results = movie_api.search(criteria["director"][0])
+  elif criteria["genre"]:
+    results = movie_api.search(criteria["genre"][0])
   else:
     results = movie_api.popular()
 
