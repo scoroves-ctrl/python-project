@@ -332,7 +332,7 @@ def get_recommendations():
   for key in ["title", "director", "actor", "genre", "studio"]:
     search_terms.extend(criteria[key])
   if not search_terms:
-    search_terms = criteria["medium"] or [str(y) for y in criteria["year"]]
+    search_terms = criteria["medium"] or ["movie"]
   
   movies = []
 
