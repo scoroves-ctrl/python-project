@@ -1,5 +1,7 @@
 from imdb import Cinemagoer
 import pandas as pd
+import os
+import json
 movie_api = Cinemagoer()
 
 class Movie:
@@ -127,21 +129,31 @@ def save_user(username, password, user_obj):
 def load_user(username, password):
     df = load_data()
 
-    user_row = df[
-        (df["username"] == username) & 
-        (df["password"] == password)
-    ]
+    # normalize the stored data
+    df["username"] = df["username"].astype(str).str.strip()
+    df["password"] = df["password"].astype(str).str.strip()
+
+    # normalize input
+    username = username.strip()
+    password = password.strip()
+
+    # find user by username first (better debugging)
+    user_row = df[df["username"] == username]
 
     if user_row.empty:
-        print("Invalid username or password.")
+        print("User not found.")
         return None
 
     row = user_row.iloc[0]
 
+    # then check passowrd
+    if row["password"] != password:
+        print("Incorrect password.")
+        return None
+
     user = User()
 
-    import json
-    movies_list = json.loads(row["movies"]) if row["movies"] else []
+    movies_list = json.loads(row["movies"]) if pd.notna(row["movies"]) else []
 
     for movie_data in movies_list:
         user.add_movie(Movie.from_dict(movie_data))
@@ -234,7 +246,7 @@ def sign_in():
         except ValueError:
           print("Enter a number.")
           continue
-        loader_user.remove_movie(index)
+        loaded_user.remove_movie(index)
         update_user(username, loaded_user)
       else:
         continue
@@ -247,12 +259,11 @@ def sign_in():
       
 while True:
   print("\n1. Sign in to view or add to your watched movie list") 
-  print("2. Get a movie recomendation") 
-  print("3. Make a profile") 
-  print("4. Quit")
+  print("2. Get a movie recomendation")
+  print("3. Quit")
 
   try:
-    choice = int(input("Enter your choice (1-4)\n"))
+    choice = int(input("Enter your choice (1-3)\n"))
   except ValueError:
     print("Enter a number.")
     continue
@@ -264,19 +275,11 @@ while True:
     get_recommendations()
 
   elif choice == 3:
-    print("placeholder")
-
-  elif choice == 4:
     print("Goodbye!")
     break
 
   else:
     print("Choice invalid.")
-
-
-
-
-
 
 
 -----------------------------------------------------------------
