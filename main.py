@@ -1,4 +1,4 @@
-from tmdbv3api import TMDb, Movie, Discover
+from tmdbv3api import TMDb, Movie, Discover, Person
 import pandas as pd
 import os
 import json
@@ -8,6 +8,7 @@ tmdb.language = "en"
 
 movie_api = Movie()
 discover = Discover()
+person_api = Person()
 
 class Movie:
   def __init__(self, title, director, year, genre):
@@ -263,37 +264,77 @@ def sign_in():
       print("Choice invalid.")
 
 def get_recommendations():
-  title_search = input("Movie title, actor, or director: ")
+  search_type = input("Search by title, actor, or director? ").lower()
+  query = input("Enter search term: ")
 
-  results = movie_api.search(title_search)
   movies = []
 
-  for movie in list(results)[:10]:
-    try:
-      details = movie_api.details(movie.id)
+  try:
 
-      title = getattr(details, "title", "Unknown")
-      release_date = getattr(details, "release_date", "")
-      year = release_date[:4] if release_date else "Unknown"
+    if search_type == "title":
 
-      genres = []
-      if hasattr(details, "genres"):
-        genres = [g["name"] for g in details.genres]
+      results = movie_api.search(query)
 
-      studio_names = []
-      if hasattr(details, "production_companies"):
-        studio_names = [s["name"] for s in details.production_companies]
+      for movie in list(results)[:10]:
 
-      movies.append({
-        "Title": title,
-        "Year": year,
-        "Genre": ", ".join(genres),
-        "Studio": ", ".join(studio_names),
-        "Medium": "movie"
-      })
+        details = movie_api.details(movie.id)
 
-    except Exception as e:
-      print("Skipped one result:", e)
+        title = getattr(details, "title", "Unknown")
+        release_date = getattr(details, "release_date", "")
+        year = release_date[:4] if release_date else "Unknown"
+
+        genres = [g["name"] for g in details.genres] if hasattr(details, "genres") else []
+
+        movies.append({
+          "Title": title,
+          "Year": year,
+          "Genre": ", ".join(genres)
+        })
+
+    elif search_type in ["actor", "director"]:
+
+      people = person_api.search(query)
+
+      if not people:
+        print("No person found.")
+        return
+
+      person = people[0]
+
+      credits = person_api.movie_credits(person.id)
+
+      if search_type == "actor":
+        movie_list = credits.cast
+      else:
+        movie_list = credits.crew
+
+      added = set()
+
+      for movie in list(movie_list)[:25]:
+
+        title = getattr(movie, "title", None)
+
+        if not title or title in added:
+          continue
+
+        added.add(title)
+
+        release_date = getattr(movie, "release_date", "")
+        year = release_date[:4] if release_date else "Unknown"
+
+        movies.append({
+          "Title": title,
+          "Year": year,
+          "Genre": ""
+        })
+
+    else:
+      print("Invalid search type.")
+      return
+
+  except Exception as e:
+    print("Error:", e)
+    return
 
   if not movies:
     print("No recommendations found.")
@@ -302,8 +343,7 @@ def get_recommendations():
   print("\nMovie Recommendations:")
 
   for movie in movies:
-    print(f"{movie['Title']} ({movie['Year']}) - {movie['Genre']} - {movie['Studio']} - {movie['Medium']}")
-
+    print(f"{movie['Title']} ({movie['Year']}) - {movie['Genre']}")
 while True:
   print("\n1. Sign in to view or add to your watched movie list") 
   print("2. Get a movie recomendation")
