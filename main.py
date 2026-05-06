@@ -263,161 +263,29 @@ def sign_in():
       print("Choice invalid.")
 
 def get_recommendations():
-  criteria = {
-    "title": [],
-    "director": [],
-    "actor": [],
-    "genre": [],
-    "year": [],
-    "studio": [],
-    "medium": []
-}
+  title_search = input("Enter a movie title: ")
 
-  while True:
-    print("\nChoose recommendation criteria:")
-    print("1. Title")
-    print("2. Director")
-    print("3. Actor")
-    print("4. Genre")
-    print("5. Year")
-    print("6. Studio")
-    print("7. Medium")
-    print("8. All criteria")
-    print("9. Get recommendations")
-
-    choice = input("Enter choice: ")
-
-    if choice == "1":
-      criteria["title"].append(input("Movie title: "))
-
-    elif choice == "2":
-      criteria["director"].append(input("Director: "))
-
-    elif choice == "3":
-      criteria["actor"].append(input("Actor: "))
-
-    elif choice == "4":
-      criteria["genre"].append(input("Genre: "))
-
-    elif choice == "5":
-      try:
-        criteria["year"].append(int(input("Year: ")))
-      except ValueError:
-        print("Enter a valid year.")
-
-    elif choice == "6":
-      criteria["studio"].append(input("Studio: "))
-
-    elif choice == "7":
-      criteria["medium"].append(input("Medium (movie, tv, video, etc): ").lower())
-
-    elif choice == "8":
-      criteria["title"].append(input("Movie title: "))
-      criteria["director"].append(input("Director: "))
-      criteria["actor"].append(input("Actor: "))
-      criteria["genre"].append(input("Genre: "))
-      try:
-        criteria["year"].append(int(input("Year: ")))
-      except:
-        pass
-      criteria["studio"].append(input("Studio: "))
-      criteria["medium"].append(input("Medium: ").lower())
-      break
-
-    elif choice == "9":
-      if any(criteria.values()):
-        break
-      else:
-        print("Enter at least one criterion first.")
-    else:
-      print("Choice invalid.")
-
+  results = movie_api.search(title_search)
   movies = []
 
-  if criteria["title"]:
-    results = movie_api.search(criteria["title"][0])
-  elif criteria["actor"]:
-    results = movie_api.search(criteria["actor"][0])
-  elif criteria["director"]:
-    results = movie_api.search(criteria["director"][0])
-  elif criteria["genre"]:
-    results = movie_api.search(criteria["genre"][0])
-  else:
-    results = movie_api.popular()
+  for movie in list(results)[:10]:
+    title = getattr(movie, "title", "Unknown")
+    release_date = getattr(movie, "release_date", "")
+    year = release_date[:4] if release_date else "Unknown"
 
-  for movie in list(results)[:25]:
-    try:
-      details = movie_api.details(movie.id, append_to_response="credits")
+    movies.append({
+      "Title": title,
+      "Year": year
+    })
 
-      title = details.title
-      year = details.release_date[:4] if details.release_date else "Unknown"
-
-      genres = [g["name"] for g in details.genres] if hasattr(details, "genres") else []
-
-      studio_names = [c["name"] for c in details.production_companies] if hasattr(details, "production_companies") else []
-
-      director_names = []
-      actor_names = []
-
-      if hasattr(details, "credits"):
-        cast = details.credits.get("cast", [])
-        crew = details.credits.get("crew", [])
-
-        actor_names = [a["name"] for a in cast[:10]]
-        director_names = [c["name"] for c in crew if c["job"] == "Director"]
-
-      kind = "movie"
-
-      score = 0
-
-      if criteria["title"]:
-        score += 4
-
-      if criteria["director"] and any(d.lower() in dn.lower() for d in criteria["director"] for dn in director_names):
-        score += 3
-
-      if criteria["actor"] and any(a.lower() in an.lower() for a in criteria["actor"] for an in actor_names):
-        score += 3
-
-      if criteria["genre"] and any(g.lower() in gn.lower() for g in criteria["genre"] for gn in genres):
-        score += 2
-
-      if criteria["year"] and year in criteria["year"]:
-        score += 2
-
-      if criteria["studio"] and any(s.lower() in sn.lower() for s in criteria["studio"] for sn in studio_names):
-        score += 2
-
-      if criteria["medium"] and any(m in kind.lower() for m in criteria["medium"]):
-        score += 1
-
-      if score > 0:
-        movies.append({
-          "Title": title,
-          "Year": year,
-          "Director": ", ".join(director_names),
-          "Genre": ", ".join(genres),
-          "Studio": ", ".join(studio_names),
-          "Medium": kind,
-          "Score": score
-        })
-    except Exception:
-      continue
-  df = pd.DataFrame(movies)
-
-  if df.empty:
+  if not movies:
     print("No recommendations found.")
     return
 
-  df = df.drop_duplicates(subset=["Title", "Year"])
-  #removes duplicate results
-  df = df.sort_values(by="Score", ascending=False).head(10)
-  #sorts the results by score, and shows the top 10
-
   print("\nMovie Recommendations:")
-  #prints recomendations 
-  for _, row in df.iterrows():
-    print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - {row['Studio']} - {row['Medium']}")
+
+  for movie in movies:
+    print(f"{movie['Title']} ({movie['Year']})")
 
 while True:
   print("\n1. Sign in to view or add to your watched movie list") 
