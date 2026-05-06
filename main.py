@@ -85,8 +85,10 @@ class User:
       return 1
     else:
       #Lists and numbers the movies that are already in the users list
+      format_movie = lambda i, movie: f"{i}: {movie}"
+      #lambda function organizes the movie message 
       for i, movie in enumerate(self.movies):
-        print(f"{i}: {movie}")
+        print(format_movie(i, movie))
 
   def edit_movie(self, index, **kwargs):
     """
