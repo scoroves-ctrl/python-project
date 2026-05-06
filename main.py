@@ -259,13 +259,13 @@ def sign_in():
 
 def get_recommendations():
   criteria = {
-  "title": [],
-  "director": [],
-  "actor": [],
-  "genre": [],
-  "year": [],
-  "studio": [],
-  "medium": []
+    "title": [],
+    "director": [],
+    "actor": [],
+    "genre": [],
+    "year": [],
+    "studio": [],
+    "medium": []
 }
 
   while True:
@@ -327,81 +327,81 @@ def get_recommendations():
     else:
       print("Choice invalid.")
 
-search_terms = []
+  search_terms = []
 
-for key in ["title", "director", "actor", "genre", "studio"]:
-  search_terms.extend(criteria[key])
-if not search_terms:
-  search_terms = criteria["medium"] or [str(y) for y in criteria["year"]]
+    for key in ["title", "director", "actor", "genre", "studio"]:
+      search_terms.extend(criteria[key])
+    if not search_terms:
+      search_terms = criteria["medium"] or [str(y) for y in criteria["year"]]
   
-movies = []
+    movies = []
 
-for term in search_terms:
-  results = movie_api.search_movie(term)
+    for term in search_terms:
+      results = movie_api.search_movie(term)
 
-  for result in results[:25]:
-    try:
-      movie = movie_api.get_movie(result.movieID)
-      title = movie.get("title", "Unknown")
-      year = movie.get("year", "Unknown")
-      genres = movie.get("genres", [])
-      directors = movie.get("director", [])
-      cast = movie.get("cast", [])
-      kind = movie.get("kind", "")
-      production = movie.get("production companies", [])
+      for result in results[:25]:
+        try:
+          movie = movie_api.get_movie(result.movieID)
+          title = movie.get("title", "Unknown")
+          year = movie.get("year", "Unknown")
+          genres = movie.get("genres", [])
+          directors = movie.get("director", [])
+          cast = movie.get("cast", [])
+          kind = movie.get("kind", "")
+          production = movie.get("production companies", [])
 
-      director_names = [d["name"] for d in directors]
-      actor_names = [a["name"] for a in cast[:10]]
-      studio_names = [p["name"] for p in production] if production else []
+          director_names = [d["name"] for d in directors]
+          actor_names = [a["name"] for a in cast[:10]]
+          studio_names = [p["name"] for p in production] if production else []
 
-      score = 0
+          score = 0
 
-      if criteria["title"] and title.lower() not in [t.lower() for t in criteria["title"]]:
-        score += 1
+          if criteria["title"] and title.lower() not in [t.lower() for t in criteria["title"]]:
+            score += 1
 
-      if criteria["director"] and any(d.lower() in [dn.lower() for dn in director_names] for d in criteria["director"]):
-        score += 3
+          if criteria["director"] and any(d.lower() in [dn.lower() for dn in director_names] for d in criteria["director"]):
+            score += 3
 
-      if criteria["actor"] and any(a.lower() in [an.lower() for an in actor_names] for a in criteria["actor"]):
-        score += 3
+          if criteria["actor"] and any(a.lower() in [an.lower() for an in actor_names] for a in criteria["actor"]):
+            score += 3
 
-      if criteria["genre"] and any(g.lower() in [gn.lower() for gn in genres] for g in criteria["genre"]):
-        score += 2
+          if criteria["genre"] and any(g.lower() in [gn.lower() for gn in genres] for g in criteria["genre"]):
+            score += 2
 
-      if criteria["year"] and year in criteria["year"]:
-        score += 2
+          if criteria["year"] and year in criteria["year"]:
+            score += 2
 
-      if criteria["studio"] and any(s.lower() in [sn.lower() for sn in studio_names] for s in criteria["studio"]):
-        score += 2
+          if criteria["studio"] and any(s.lower() in [sn.lower() for sn in studio_names] for s in criteria["studio"]):
+            score += 2
 
-      if criteria["medium"] and any(m in kind.lower() for m in criteria["medium"]):
-        score += 1
+          if criteria["medium"] and any(m in kind.lower() for m in criteria["medium"]):
+            score += 1
 
-      if score > 0:
-        movies.append({
-          "Title": title,
-          "Year": year,
-          "Director": ", ".join(director_names),
-          "Genre": ", ".join(genres),
-          "Studio": ", ".join(studio_names),
-          "Medium": kind,
-          "Score": score
-        })
-    except Exception:
-      continue
-df = pd.DataFrame(movies)
+          if score > 0:
+            movies.append({
+              "Title": title,
+              "Year": year,
+              "Director": ", ".join(director_names),
+              "Genre": ", ".join(genres),
+              "Studio": ", ".join(studio_names),
+              "Medium": kind,
+              "Score": score
+            })
+        except Exception:
+          continue
+    df = pd.DataFrame(movies)
 
-if df.empty:
-  print("No recommendations found.")
+    if df.empty:
+      print("No recommendations found.")
 
-df = df.drop_duplicates(subset=["Title", "Year"])
-#removes duplicate results
-df = df.sort_values(by="Score", ascending=False.head(10))
-#sorts the results by score, and shows the top 10
+    df = df.drop_duplicates(subset=["Title", "Year"])
+    #removes duplicate results
+    df = df.sort_values(by="Score", ascending=False.head(10))
+    #sorts the results by score, and shows the top 10
 
-print("\nMovie Recommendations:")
-#prints recomendations 
-for _, row in df.iterrows():
+    print("\nMovie Recommendations:")
+    #prints recomendations 
+    for _, row in df.iterrows():
   print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - {row['Studio']} - {row['Medium']}")
 
 while True:
