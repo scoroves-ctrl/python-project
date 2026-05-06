@@ -370,7 +370,7 @@ def get_recommendations():
 
       score = 0
 
-      if criteria["title"] and any(t.lower() in title.lower() for t in criteria["title"]):
+      if criteria["title"]:
         score += 4
 
       if criteria["director"] and any(d.lower() in dn.lower() for d in criteria["director"] for dn in director_names):
