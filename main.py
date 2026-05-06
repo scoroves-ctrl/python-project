@@ -402,7 +402,7 @@ def get_recommendations():
   print("\nMovie Recommendations:")
   #prints recomendations 
   for _, row in df.iterrows():
-print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - {row['Studio']} - {row['Medium']}")
+  print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - {row['Studio']} - {row['Medium']}")
 
 while True:
   print("\n1. Sign in to view or add to your watched movie list") 
