@@ -282,7 +282,6 @@ while True:
     print("Choice invalid.")
 
 
------------------------------------------------------------------
 def get_recommendations():
   criteria = {
   "title": [],
@@ -401,9 +400,9 @@ for term in search_terms:
           "Title": title,
           "Year": year,
           "Director": ", ".join(director_names),
-          "Genre": ", ".join(genres)
+          "Genre": ", ".join(genres),
           "Studio": ", ".join(studio_names),
-          "Medium": kind
+          "Medium": kind,
           "Score": score
         })
     except Exception:
@@ -422,4 +421,4 @@ df = df.sort_values(by="Score", ascending=False.head(10)
 print("\nMovie Recommendations:")
 #prints recomendations 
 for _, row in df.iterrows():
-  print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - row['Studio']} - row['Medium']}")
+  print(f"{row['Title']} ({row['Year']}) - {row['Director']} - {row['Genre']} - {row['Studio']} - {row['Medium']}")
