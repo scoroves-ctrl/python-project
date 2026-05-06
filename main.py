@@ -396,7 +396,7 @@ def get_recommendations():
 
   df = df.drop_duplicates(subset=["Title", "Year"])
   #removes duplicate results
-  df = df.sort_values(by="Score", ascending=False.head(10))
+  df = df.sort_values(by="Score", ascending=False).head(10)
   #sorts the results by score, and shows the top 10
 
   print("\nMovie Recommendations:")
