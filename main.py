@@ -263,20 +263,37 @@ def sign_in():
       print("Choice invalid.")
 
 def get_recommendations():
-  title_search = input("Enter a movie title: ")
+  title_search = input("Movie title, actor, or director: ")
 
   results = movie_api.search(title_search)
   movies = []
 
   for movie in list(results)[:10]:
-    title = getattr(movie, "title", "Unknown")
-    release_date = getattr(movie, "release_date", "")
-    year = release_date[:4] if release_date else "Unknown"
+    try:
+      details = movie_api.details(movie.id)
 
-    movies.append({
-      "Title": title,
-      "Year": year
-    })
+      title = getattr(details, "title", "Unknown")
+      release_date = getattr(details, "release_date", "")
+      year = release_date[:4] if release_date else "Unknown"
+
+      genres = []
+      if hasattr(details, "genres"):
+        genres = [g["name"] for g in details.genres]
+
+      studio_names = []
+      if hasattr(details, "production_companies"):
+        studio_names = [s["name"] for s in details.production_companies]
+
+      movies.append({
+        "Title": title,
+        "Year": year,
+        "Genre": ", ".join(genres),
+        "Studio": ", ".join(studio_names),
+        "Medium": "movie"
+      })
+
+    except Exception as e:
+      print("Skipped one result:", e)
 
   if not movies:
     print("No recommendations found.")
@@ -285,7 +302,7 @@ def get_recommendations():
   print("\nMovie Recommendations:")
 
   for movie in movies:
-    print(f"{movie['Title']} ({movie['Year']})")
+    print(f"{movie['Title']} ({movie['Year']}) - {movie['Genre']} - {movie['Studio']} - {movie['Medium']}")
 
 while True:
   print("\n1. Sign in to view or add to your watched movie list") 
