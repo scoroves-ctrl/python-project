@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import json
 tmdb = TMDb()
-tmdb.api_key = "YOUR_API_KEY"
+tmdb.api_key = "7264a55d7bdda57808b10751e37b54ab"
 tmdb.language = "en"
 
 movie_api = Movie()
