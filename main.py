@@ -274,9 +274,9 @@ def get_recommendations():
     print("2. Director")
     print("3. Actor")
     print("4. Genre")
-    print("5. Studio")
-    print("6. Medium")
-    print("7. Year")
+    print("5. Year")
+    print("6. Studio")
+    print("7. Medium")
     print("8. All criteria")
     print("9. Get recommendations")
 
@@ -356,8 +356,8 @@ def get_recommendations():
 
         score = 0
 
-        if criteria["title"] and title.lower() not in [t.lower() for t in criteria["title"]]:
-          score += 1
+        if criteria["title"] and title.lower() in [t.lower() for t in criteria["title"]]:
+          score += 4
 
         if criteria["director"] and any(d.lower() in [dn.lower() for dn in director_names] for d in criteria["director"]):
           score += 3
@@ -393,6 +393,7 @@ def get_recommendations():
 
   if df.empty:
     print("No recommendations found.")
+    return
 
   df = df.drop_duplicates(subset=["Title", "Year"])
   #removes duplicate results
