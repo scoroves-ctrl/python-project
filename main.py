@@ -7,8 +7,11 @@ tmdb.api_key = "7264a55d7bdda57808b10751e37b54ab"
 tmdb.language = "en"
 
 movie_api = Movie()
+# an object created with the Movie class from TMDb before Movie class is overwritten
 discover = Discover()
+# an object created with Discover class from TMDb
 person_api = Person()
+# an object created with Person class from TMDb
 
 class Movie:
   def __init__(self, title, director, year, genre):
@@ -266,17 +269,21 @@ def sign_in():
       print("Choice invalid.")
 
 def get_recommendations():
-  search_type = input("Search by 1. title, 2. actor, or 3. director? (type the number").lower()
+  """This function gives the user a list of movie recommendations based on a keyword search using the tmdbv3api"""
+  search_type = input("Search by 1. title, 2. actor, or 3. director? (type the number): ").lower()
+  # This prompt asks the user which keyword type they would like to search by
   query = input("Enter search term: ")
+  # This prompt asks the user which the keyword they would like to search
 
   movies = []
+  # A blank list of movies is made, movies that match the inputted keyword will be added to this list
 
   try:
 
     if search_type == "1":
-
+    # For title searchs
       results = movie_api.search(query)
-
+      # 
       for movie in list(results)[:10]:
 
         details = movie_api.details(movie.id)
