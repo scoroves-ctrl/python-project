@@ -81,7 +81,7 @@ class User:
     else:
       #Lists and numbers the movies that are already in the users list
       format_movie = lambda i, movie: f"{i}: {movie}"
-      #lambda function organizes the movie message 
+      #lambda function organizes the movie message with its number 
       for i, movie in enumerate(self.movies):
         print(format_movie(i, movie))
 
@@ -107,12 +107,20 @@ class User:
 
 users = "users.csv"
 def load_data():
+  """
+  This function allows the code to check that the user exists
+  """
   if os.path.exists(users) and os.path.getsize(users) > 0:
+    #this reads the user csv file
       return pd.read_csv(users)
   else:
       return pd.DataFrame(columns=["username", "password", "movies"])
+      # this displays a blank table if there is no data available 
 
 def save_user(username, password, user_obj):
+  """
+  This function is used to save the user in a csv file and converts the movies into dictionaries
+  """
     df = load_data()
 
     movies_data = [movie.to_dict() for movie in user_obj.movies]
@@ -128,6 +136,9 @@ def save_user(username, password, user_obj):
     df.to_csv(users, index=False)
 
 def load_user(username, password):
+  """
+  This function loads an existing user from the csv file
+  """
     df = load_data()
 
     # normalize the stored data
@@ -143,6 +154,7 @@ def load_user(username, password):
 
     if user_row.empty:
         print("User not found.")
+      #If there is no user to be found, the user gets an Error message
         return None
 
     row = user_row.iloc[0]
@@ -153,21 +165,28 @@ def load_user(username, password):
         return None
 
     user = User()
+    #Defines user as the previosly defined user class 
 
     movies_list = json.loads(row["movies"]) if pd.notna(row["movies"]) else []
+    #turns the text into a list
 
     for movie_data in movies_list:
         user.add_movie(Movie.from_dict(movie_data))
+        #Adds the movie to the user object 
 
     return user
 
 def update_user(username, user_obj):
+  """
+  This function is udes to update the user after the user has changed their movie list 
+  """
     df = load_data()
 
     movies_data = [movie.to_dict() for movie in user_obj.movies]
     movies_json = json.dumps(movies_data)
 
     df.loc[df["username"] == username, "movies"] = movies_json
+    #Finds the user name in the file and adds the correct movie to the correct user
 
     df.to_csv(users, index=False)
 
@@ -206,6 +225,7 @@ def sign_in():
       continue
 
     if choice == 1:
+      #adds movie to user list 
       title = input("Title: ")
       director = input("Director: ")
       year = input("Year: ")
@@ -214,9 +234,11 @@ def sign_in():
       update_user(username, loaded_user)
 
     elif choice == 2:
+      # view users movie list 
       loaded_user.view_movies()
 
     elif choice == 3:
+      #Edit list 
       if loaded_user.view_movies() != 1:
         while True:
           index = int(input("Number of movie to edit: "))
@@ -241,6 +263,7 @@ def sign_in():
       else:
         continue
     elif choice == 4:
+      # Remove user
       if loaded_user.view_movies() != 1:
         try:
           index = int(input("Number of movie to remove: "))
@@ -253,9 +276,12 @@ def sign_in():
         continue
 
     elif choice == 5:
+      #signs out and returns to home screen
+      print("Return to home screen")
       break
 
     else:
+      #tells the user that they entred an invalid input 
       print("Choice invalid.")
 
 def get_recommendations():
@@ -332,6 +358,7 @@ def get_recommendations():
       return
 
   except Exception as e:
+    #allows the program to not break if anything goes wrong]
     print("Error:", e)
     return
 
