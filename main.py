@@ -1,24 +1,28 @@
 from tmdbv3api import TMDb, Movie, Discover, Person
+# TMDb, Movie, Discover, and Person classes are added. This is for searching movie recommendations
 import pandas as pd
+# Pandas is added for DataFrames, which are very helpful for stored and gathering data
 import os
+# os is a built in module used for accessing the underlying computer system, used for storing and gathering the data in the csv
 import json
+# json is a built in module used for converting dictionaries to JSON strings which can be readily stored in users.csv
 tmdb = TMDb()
+# an object created with TMDb class from tmdbv3api
 tmdb.api_key = "7264a55d7bdda57808b10751e37b54ab"
+# key used to access tmdbv3api functionality
 tmdb.language = "en"
+# language set to English
 
 movie_api = Movie()
-# an object created with the Movie class from TMDb before Movie class is overwritten
+# an object created with the Movie class from tmdbv3api before Movie class is overwritten
 discover = Discover()
-# an object created with Discover class from TMDb
+# an object created with Discover class from tmdbv3api
 person_api = Person()
-# an object created with Person class from TMDb
+# an object created with Person class from tmdbv3api
 
 class Movie:
   def __init__(self, title, director, year, genre):
-    """
-    This function is run every time a new movie is created and allows each movie 
-    to store its title, director, year, and genre.
-    """
+    """This function is run every time a new movie is created and allows each movie to store its title, director, year, and genre."""
     self.title = title
     self.director = director
     self.year = year
@@ -45,9 +49,7 @@ class Movie:
     )
 
   def update(self, title=None, director=None, year=None, genre=None):
-    """
-    This functions sets the title, director, year, and genre to none unless the user updates them
-    """
+    """This functions sets the title, director, year, and genre to none unless the user updates them"""
     if title is not None:
       self.title = title
     if director is not None:
@@ -58,32 +60,22 @@ class Movie:
       self.genre = genre
 
   def __str__(self):
-    """
-    This function prints the movie in an organized way that allows it to be read nicely
-    """
+    """This function prints the movie in an organized way that allows it to be read nicely"""
     return f"{self.title} ({self.year}), directed by {self.director} - {self.genre}"
 
 class User:
   def __init__(self):
-    """
-    This function runs whenever a new user is created, 
-    and creates a new empty list of movies that belongs to the user.
-    """
+    """This function runs whenever a new user is created, and creates a new empty list of movies that belongs to the user."""
     self.movies = []
 
   def add_movie(self, movie):
-    """
-    This function allows the user to append a movie to their list
-    """
+    """This function allows the user to append a movie to their list"""
     self.movies.append(movie)
 
   def view_movies(self):
-    """
-    This function shows all the movies in the users list
-    """
+    """This function shows all the movies in the users list"""
     if not self.movies:
-      #If the list of users movies remains empty, the function returns the message letting them know,
-      #and it does not let the user edit or remove things that are not there 
+      #If the list of users movies remains empty, the function returns the message letting them know, and it does not let the user edit or remove things that are not there 
       print("You don't have any movies in your list yet.")
       return 1
     else:
@@ -94,9 +86,7 @@ class User:
         print(format_movie(i, movie))
 
   def edit_movie(self, index, **kwargs):
-    """
-    This function allows the user to edit a specific number movie 
-    """
+    """This function allows the user to edit a specific number movie"""
     if 0 <= index < len(self.movies):
       # This makes sure that the number given is less than or equal to the number of movies that the user has
       self.movies[index].update(**kwargs)
