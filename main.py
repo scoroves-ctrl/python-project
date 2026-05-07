@@ -204,6 +204,7 @@ def sign_in():
       return sign_in()
   elif choice == "n":
     # for a new user, they are asked to create a username and password
+    movie_list = User()
     username = input("What would you like as your username?: ")
     password = input("What would you like as your password?: ")
     save_user(username, password, movie_list)
