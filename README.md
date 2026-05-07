@@ -20,7 +20,6 @@ Project description:
 	Libraries: 
 		- tmdbv3api
 		- Pandas 
-		- OS
 		- JSON
 
  
