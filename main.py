@@ -343,8 +343,6 @@ def get_recommendations():
       else:
         movie_list = credits.crew
         # searches crew for directors
-      added = set()
-      # creates a set object
       for movie in list(movie_list)[:10]:
         # converts json to list and limits to the first 10 results. list comprehension is used for each movie in the list
         details = movie_api.details(movie.id)
